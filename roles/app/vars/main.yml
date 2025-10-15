@@ -1,0 +1,4 @@
+app_name: nodejs-service
+app_repo: "https://github.com/DevOps-PA-resume/Dockerized-Service"
+app_path: "/var/www/nodejs-service"
+node_app_port: 3000

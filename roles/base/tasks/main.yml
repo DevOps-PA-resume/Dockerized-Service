@@ -1,0 +1,17 @@
+---
+- name: Update APT packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install useful packages
+  apt:
+    name:
+      - curl
+      - git
+      - ufw
+      - fail2ban
+      - nodejs
+      - npm
+    state: present
+
