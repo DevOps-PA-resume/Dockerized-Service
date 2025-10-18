@@ -40,7 +40,9 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.REMOTE_SSH_KEY }}
           port: ${{ secrets.REMOTE_PORT || 22 }}
+          debug: true
           script: |
+            set -xe
             echo "Pulling latest Docker image..."
             docker pull $IMAGE_NAME:latest
 
@@ -57,4 +59,5 @@ jobs:
               -e SECRET_MESSAGE="${{ secrets.SECRET_MESSAGE }}" \
               $IMAGE_NAME:latest
 
+            docker logs -n 50 $CONTAINER_NAME || true
             echo "Deployment complete!"
