@@ -15,7 +15,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.send("Hello Pad!");
+  res.send("Hello World!");
 });
 
 app.get("/secret", (req, res) => {
