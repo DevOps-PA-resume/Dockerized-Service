@@ -10,38 +10,51 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev
 
+    env:
+      IMAGE_NAME: docker.io/therealpad/my-node-app
+      CONTAINER_NAME: my-node-app
+      PORT: 3000
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build Docker image
         run: |
-          docker build -t my-node-app ./server
+          docker build -t $IMAGE_NAME:latest .
 
-      - name: Run container
+      - name: Push Docker image
         run: |
-          docker run -d --name test-container \
-            -p 3000:3000 \
-            -e PORT=3000 \
-            -e USERNAME="${{ secrets.USERNAME }}" \
-            -e PASSWORD="${{ secrets.PASSWORD }}" \
-            -e SECRET_MESSAGE="${{ secrets.SECRET_MESSAGE }}" \
-            my-node-app
-          
-          # Give it a moment to start
-          sleep 5
+          docker push $IMAGE_NAME:latest
 
-      - name: Test app endpoints
-        run: |
-          echo "Testing public endpoint..."
-          curl -f http://localhost:3000
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.REMOTE_SSH_KEY }}
+          port: ${{ secrets.REMOTE_PORT || 22 }}
+          script: |
+            echo "Pulling latest Docker image..."
+            docker pull $IMAGE_NAME:latest
 
-          echo "Testing protected endpoint..."
-          curl -f -u "${{ secrets.USERNAME }}:${{ secrets.PASSWORD }}" http://localhost:3000/secret
+            echo "Stopping existing container (if any)..."
+            docker rm -f $CONTAINER_NAME || true
 
-      - name: Stop and remove container
-        if: always()
-        run: |
-          docker stop test-container
-          docker rm test-container
+            echo "Running container..."
+            docker run -d \
+              --name $CONTAINER_NAME \
+              -p $PORT:$PORT \
+              -e PORT=$PORT \
+              -e USERNAME=${{ secrets.USERNAME }} \
+              -e PASSWORD=${{ secrets.PASSWORD }} \
+              -e SECRET_MESSAGE="${{ secrets.SECRET_MESSAGE }}" \
+              $IMAGE_NAME:latest
 
+            echo "Deployment complete!"
