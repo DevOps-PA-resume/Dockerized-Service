@@ -14,7 +14,6 @@ jobs:
       IMAGE_NAME: docker.io/therealpad/my-node-app
       CONTAINER_NAME: my-node-app
       PORT: 3000
-      MESSAGE: ${{ secrets.SECRET_MESSAGE }}
 
     steps:
       - name: Checkout repository
@@ -59,6 +58,6 @@ jobs:
           ansible-playbook -i inventory.ini setup.yml \
             --extra-vars "node_username=${{ secrets.NODE_USERNAME }} \
                           node_password=${{ secrets.NODE_PASSWORD }} \
-                          secret_message='$MESSAGE'"
+                          secret_message='${{ secrets.SECRET_MESSAGE }}'"
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
