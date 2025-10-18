@@ -58,6 +58,6 @@ jobs:
           ansible-playbook -i inventory.ini setup.yml \
             --extra-vars "node_username=${{ secrets.NODE_USERNAME }} \
                           node_password=${{ secrets.NODE_PASSWORD }} \
-                          secret_message='${{ secrets.SECRET_MESSAGE }}'"
+                          secret_message='test 1 2'"
         env:
           ANSIBLE_HOST_KEY_CHECKING: "False"
