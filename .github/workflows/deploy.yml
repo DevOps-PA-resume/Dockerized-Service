@@ -23,9 +23,9 @@ jobs:
           docker run -d --name test-container \
             -p 3000:3000 \
             -e PORT=3000 \
-            -e USERNAME=${{ secrets.USERNAME }} \
-            -e PASSWORD=${{ secrets.PASSWORD }} \
-            -e SECRET_MESSAGE=${{ secrets.SECRET_MESSAGE }} \
+            -e USERNAME="${{ secrets.USERNAME }}" \
+            -e PASSWORD="${{ secrets.PASSWORD }}" \
+            -e SECRET_MESSAGE="${{ secrets.SECRET_MESSAGE }}" \
             my-node-app
           
           # Give it a moment to start
