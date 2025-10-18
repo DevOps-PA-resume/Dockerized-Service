@@ -43,7 +43,7 @@ jobs:
           debug: true
           script: |
             set -xe
-            ls
+            ls; echo "LS done" >&2
             echo "Pulling latest Docker image..."
             docker pull $IMAGE_NAME:latest
 
